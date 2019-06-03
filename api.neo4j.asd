@@ -7,9 +7,12 @@
   :author ""
   :license ""
   :depends-on ()
-  :components ((:module "src"
+  :components ((:module "libs"
                 :components
-                ((:file "api.neo4j"))))
+                ((:file "authentication")))
+               (:module "src"
+                :components
+                ((:file "package"))))
   :description ""
   :long-description
   #.(read-file-string
