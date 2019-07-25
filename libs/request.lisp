@@ -13,7 +13,7 @@
           uri
           stream))
 
-(defun request-core (method path user password)
+(defun request-get (method path user password)
   (multiple-value-bind (body status response-headers uri stream)
       (dex:request (make-uri path)
                    :method     method
@@ -25,9 +25,26 @@
                     :uri uri
                     :stream stream)))
 
-(defun request (method path &key user password)
+(defun request-post (method path post-parameters user password)
+  (multiple-value-bind (body status response-headers uri stream)
+      (dex:request (make-uri path)
+                   :method     method
+                   :headers    (make-request-headers)
+                   :basic-auth (make-basic-auth :user user :password password))
+    (return-values  :status status
+                    :body body
+                    :response-headers response-headers
+                    :uri uri
+                    :stream stream)))
+
+
+(defun request (method path &key post-parameter user password)
   (handler-case
-      (request-core method path user password)
+      (cond ((eq :get method)
+             (request-get method path user password))
+            ((eq :post method)
+             (request-post method path post-parameter user password))
+            (t (error "Bad method. method=~S" method)))
     (dex:http-request-failed (e)
       (describe e)
       (return-values :status (dex:response-status e)

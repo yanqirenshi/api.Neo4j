@@ -13,19 +13,17 @@
                 ((:file "authentication")
                  (:file "header")
                  (:file "uri")
-                 (:file "request")
-                 (:module "libs"
-                  :components
-                  ((:file "package")
-                   (:file "syntax")
-                   (:file "clauses")
-                   (:file "functions")
-                   (:file "cypher")))))
+                 (:file "request")))
                (:module "src"
                 :components
                 ((:file "package")
                  (:file "user")
-                 (:file "db"))))
+                 (:file "db")
+                 (:module "http-api"
+                  :components
+                  ((:file "package")
+                   (:file "query")
+                   (:file "transaction"))))))
   :description ""
   :long-description
   #.(read-file-string
