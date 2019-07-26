@@ -1,5 +1,5 @@
 #|
-  This file is a part of api.neo4j project.
+This file is a part of api.neo4j project.
 |#
 
 (defsystem "api.neo4j"
@@ -8,7 +8,20 @@
   :license ""
   :depends-on (:dexador
                :quri)
-  :components ((:module "libs"
+  :components ((:module "cypher"
+                :components
+                ((:file "package")
+                 (:file "syntax")
+                 (:module "clauses"
+                  :components
+                  ((:file "package")
+                   (:file "util")
+                   (:file "clause-match")
+                   (:file "operators")
+                   (:file "variables")
+                   (:file "clauses")))
+                 (:file "functions")))
+               (:module "libs"
                 :components
                 ((:file "authentication")
                  (:file "header")
