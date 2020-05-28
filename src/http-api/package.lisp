@@ -1,25 +1,43 @@
 (defpackage api.neo4j.http-api
-  (:use #:cl))
+  (:use #:cl)
+  (:import-from :api.neo4j.request
+                #:request)
+  (:export #:http-api))
 (in-package :api.neo4j.http-api)
 
 
-;; https://neo4j.com/docs/http-api/current/actions/begin-and-commit-a-transaction-in-one-request/
+(defun mkstmt (statement parameters)
+  (list :|statement| statement
+        :|parameters| parameters))
+
+(defun mkstmts-core (data)
+  (alexandria:when-let ((s (car data)))
+    (cons (mkstmt (car s)
+                  (cdr s))
+          (mkstmts-core (cdr data)))))
 
 
-;; http://localhost:7474/db/data/transaction
-;; http://localhost:7474/db/data/transaction/commit
-;; http://localhost:7474/db/data/transaction/{id}
-;; http://localhost:7474/db/data/transaction/{id}/commit
-(defun make-transaction-path (id commit)
-  (let ((base "/db/data/transaction"))
-    (cond ((and id commit) (format t "~a/~a/commit" base id))
-          (id              (format t "~a/~a"        base id))
-          (commit          (format t "~a/commit"    base))
-          (t               base))))
+(defun mkstmts (data)
+  (let ((contents (mkstmts-core data)))
+    (when contents
+      (list :|statements| contents))))
 
 
-;; #:api.neo4j.request
-(defun transaction (method &key id commit user password)
-  (api.neo4j.request:request method
-                             (make-transaction-path id commit)
-                             :user user :password password))
+(defun statements2content (statements)
+  (cond ((null statements) nil)
+        ((stringp statements) statements)
+        ((listp statements)
+         (jojo:to-json (mkstmts statements)))
+        (t (error "Not Supported yet. type=~S" (type-of statements)))))
+
+
+(defun http-api (&key statements
+                   db user password)
+  (unless (and db user password)
+    (error "A required item has not been completed. Please input."))
+  (if (null statements)
+      (request :get  "/"
+               :user user :password password)
+      (request :post (concatenate 'string "/db/" db "/tx")
+               :content (statements2content statements)
+               :user user :password password)))

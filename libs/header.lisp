@@ -5,4 +5,5 @@
 
 (defun make-request-headers ()
   '(("Accept" . "application/json")
-    ("charset" . "UTF-8")))
+    ("charset" . "UTF-8")
+    ("Content-Type" . "application/json")))

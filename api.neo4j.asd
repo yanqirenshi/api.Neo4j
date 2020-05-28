@@ -7,21 +7,9 @@ This file is a part of api.neo4j project.
   :author ""
   :license ""
   :depends-on (:dexador
-               :quri)
-  :components ((:module "cypher"
-                :components
-                ((:file "package")
-                 (:file "syntax")
-                 (:module "clauses"
-                  :components
-                  ((:file "package")
-                   (:file "util")
-                   (:file "clause-match")
-                   (:file "operators")
-                   (:file "variables")
-                   (:file "clauses")))
-                 (:file "functions")))
-               (:module "libs"
+               :quri
+               :jonathan)
+  :components ((:module "libs"
                 :components
                 ((:file "authentication")
                  (:file "header")
@@ -29,14 +17,16 @@ This file is a part of api.neo4j project.
                  (:file "request")))
                (:module "src"
                 :components
-                ((:file "package")
-                 (:file "user")
-                 (:file "db")
-                 (:module "http-api"
+                ((:module "http-api"
+                  :components
+                  ((:file "package")))
+                 (:module "rest-api"
                   :components
                   ((:file "package")
                    (:file "query")
-                   (:file "transaction"))))))
+                   (:file "transaction")))
+                 (:file "package")
+                 (:file "user"))))
   :description ""
   :long-description
   #.(read-file-string
