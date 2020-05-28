@@ -10,7 +10,8 @@
 (defvar *password* nil)
 
 (defun make-basic-auth (&key (user *user*) (password *password*))
-  (cons user password))
+  (when (or user password)
+    (cons user password)))
 
 ;;;;;
 ;;;;; Base64

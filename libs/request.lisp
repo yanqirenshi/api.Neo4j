@@ -10,34 +10,44 @@
            #:*port*))
 (in-package :api.neo4j.request)
 
-(defun return-values  (&key status body response-headers uri stream)
-  (values status
-          (jojo:parse body)
+
+(defun return-values  (&key body status response-headers uri stream)
+  (values (jojo:parse body)
+          status
           response-headers
           uri
           stream))
 
+
+(defun assert-user-password (user password)
+  (unless (and user password)
+    (error "A required item has not been completed. Please input.")))
+
+
 (defun request-get (method path user password)
+  (when (string/= "/" path)
+    (assert-user-password user password))
   (multiple-value-bind (body status response-headers uri stream)
       (dex:request (make-uri path)
                    :method     method
                    :headers    (make-request-headers)
                    :basic-auth (make-basic-auth :user user :password password))
-    (return-values  :status status
-                    :body body
+    (return-values  :body body
+                    :status status
                     :response-headers response-headers
                     :uri uri
                     :stream stream)))
 
 (defun request-post (method path content user password)
+  (assert-user-password user password)
   (multiple-value-bind (body status response-headers uri stream)
       (dex:request (make-uri path)
                    :method     method
                    :headers    (make-request-headers)
                    :basic-auth (make-basic-auth :user user :password password)
                    :content    content)
-    (return-values  :status status
-                    :body body
+    (return-values  :body body
+                    :status status
                     :response-headers response-headers
                     :uri uri
                     :stream stream)))

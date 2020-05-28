@@ -33,11 +33,11 @@
 
 (defun http-api (&key statements
                    db user password)
-  (unless (and db user password)
-    (error "A required item has not been completed. Please input."))
   (if (null statements)
       (request :get  "/"
                :user user :password password)
-      (request :post (concatenate 'string "/db/" db "/tx")
-               :content (statements2content statements)
-               :user user :password password)))
+      (progn
+        (assert db)
+        (request :post (concatenate 'string "/db/" db "/tx")
+                 :content (statements2content statements)
+                 :user user :password password))))

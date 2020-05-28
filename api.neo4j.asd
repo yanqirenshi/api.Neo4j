@@ -17,7 +17,9 @@ This file is a part of api.neo4j project.
                  (:file "request")))
                (:module "src"
                 :components
-                ((:module "http-api"
+                ((:file "environment")
+                 (:file "assertions")
+                 (:module "http-api"
                   :components
                   ((:file "package")))
                  (:module "rest-api"
@@ -26,6 +28,8 @@ This file is a part of api.neo4j project.
                    (:file "query")
                    (:file "transaction")))
                  (:file "package")
+                 (:file "variables")
+                 (:file "api")
                  (:file "user"))))
   :description ""
   :long-description
