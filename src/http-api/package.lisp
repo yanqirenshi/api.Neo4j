@@ -7,8 +7,10 @@
 
 
 (defun mkstmt (statement parameters)
-  (list :|statement| statement
-        :|parameters| parameters))
+  (if (null parameters)
+      (list :|statement| statement)
+      (list :|statement| statement
+            :|parameters| parameters)))
 
 (defun mkstmts-core (data)
   (alexandria:when-let ((s (car data)))
@@ -25,9 +27,12 @@
 
 (defun statements2content (statements)
   (cond ((null statements) nil)
+
         ((stringp statements) statements)
+
         ((listp statements)
          (jojo:to-json (mkstmts statements)))
+
         (t (error "Not Supported yet. type=~S" (type-of statements)))))
 
 
@@ -38,6 +43,7 @@
                :user user :password password)
       (progn
         (assert db)
-        (request :post (concatenate 'string "/db/" db "/tx")
-                 :content (statements2content statements)
-                 :user user :password password))))
+        (let ((c (statements2content statements)))
+          (request :post (concatenate 'string "/db/" db "/tx")
+                   :content c
+                   :user user :password password)))))
