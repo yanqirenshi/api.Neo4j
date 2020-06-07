@@ -3,7 +3,8 @@
         #:api.neo4j.authentication
         #:api.neo4j.uri
         #:api.neo4j.request.header)
-  (:export #:request)
+  (:export #:request
+           #:request-post-by-uri)
   ;; from api.neo4j.uri
   (:export #:*scheme*
            #:*host*
@@ -38,14 +39,21 @@
                     :uri uri
                     :stream stream)))
 
-(defun request-post (method path content user password)
+
+(defun request-post-by-uri (uri &key user password content)
+  (dex:request uri
+               :method     :post
+               :headers    (make-request-headers)
+               :basic-auth (make-basic-auth :user user :password password)
+               :content    content))
+
+(defun request-post (path content user password)
   (assert-user-password user password)
   (multiple-value-bind (body status response-headers uri stream)
-      (dex:request (make-uri path)
-                   :method     method
-                   :headers    (make-request-headers)
-                   :basic-auth (make-basic-auth :user user :password password)
-                   :content    content)
+      (request-post-by-uri (make-uri path)
+                           :user user
+                           :password password
+                           :content content)
     (return-values  :body body
                     :status status
                     :response-headers response-headers
@@ -58,7 +66,7 @@
       (cond ((eq :get method)
              (request-get method path user password))
             ((eq :post method)
-             (request-post method path content user password))
+             (request-post path content user password))
             (t (error "Bad method. method=~S" method)))
     (dex:http-request-failed (e)
       (describe e)

@@ -1,4 +1,5 @@
 (defpackage api.neo4j
+  (:nicknames :neo4j)
   (:use #:cl
         #:api.neo4j.request
         #:api.neo4j.env)
@@ -13,5 +14,6 @@
   ;; from native
   (:export #:*db*
            #:*user*
-           #:*password*))
+           #:*password*)
+  (:export #:api))
 (in-package :api.neo4j)
