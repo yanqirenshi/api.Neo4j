@@ -21,7 +21,10 @@ This file is a part of api.neo4j project.
                  (:file "assertions")
                  (:module "http-api"
                   :components
-                  ((:file "package")))
+                  ((:file "result")
+                   (:file "statement")
+                   (:file "package")
+                   (:file "api")))
                  (:module "rest-api"
                   :components
                   ((:file "package")
