@@ -1,25 +1,21 @@
 (in-package :api.neo4j)
 
+(export 'http)
+
 
 (defun ensure-environment ()
   (unless *environment*
     (setf *environment* (http-api))))
 
 
-(defun api (api-type &key
-                       (db *db*) (user *user*) (password *password*)
-                       commit-uri
-                       commit
-                       statements)
+(defun http (&key (db *db*) (user *user*) (password *password*)
+             commit-uri
+             commit
+             statements)
   (ensure-environment)
-  (cond ((eq :http api-type)
-         (http-api :statements statements
-                   :commit-uri commit-uri
-                   :commit commit
-                   :db db
-                   :user user
-                   :password password))
-        ((eq :rest api-type)
-         (rest-api :user user
-                   :password password))
-        (t (error "Not Supported yet. api-type=~S" api-type))))
+  (http-api :statements statements
+            :commit-uri commit-uri
+            :commit commit
+            :db db
+            :user user
+            :password password))

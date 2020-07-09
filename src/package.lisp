@@ -5,8 +5,6 @@
         #:api.neo4j.env)
   (:import-from :api.neo4j.http-api
                 #:http-api)
-  (:import-from :api.neo4j.rest-api
-                #:rest-api)
   ;; from api.neo4j.uri
   (:export #:*scheme*
            #:*host*
@@ -14,6 +12,5 @@
   ;; from native
   (:export #:*db*
            #:*user*
-           #:*password*)
-  (:export #:api))
+           #:*password*))
 (in-package :api.neo4j)
