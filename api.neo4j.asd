@@ -25,11 +25,6 @@ This file is a part of api.neo4j project.
                    (:file "statement")
                    (:file "package")
                    (:file "api")))
-                 (:module "rest-api"
-                  :components
-                  ((:file "package")
-                   (:file "query")
-                   (:file "transaction")))
                  (:file "package")
                  (:file "variables")
                  (:file "api")
