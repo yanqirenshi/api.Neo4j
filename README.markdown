@@ -25,20 +25,56 @@
 
 ### http
 
-**http** _&key_ **db** **user** **password** **commit-uri** **commit** **statements** **adjuster** **nature** _=>_ **result**
+#### Syntax
+
+> **http** _&key_ **statements** **commit-uri** **commit** **adjuster** **nature** **db** **user** **password** _=>_ **result**
+
+#### `statements`
+
+#### `commit-uri`
+
+#### `commit`
+
+実行する `statements` でコミットする場合は `t` を指定します。
+
+デフォルト値は `t` です。
+
+この値が `nil` の場合、実行した `statements` はトランザクション実行となり commit されていない状態になります。
+
+別途 `commit-uri` でコミットする必要があります。
+
+#### `adjuster`
+
+API から取得した値を変換するための関数を指定します。
+
+この関数では必ず値を返す必要があります。
+
+#### `nature`
+
+返す値 `results` の形式を指定します。
+
+`t` の場合は [Neo4j の API が返す値](https://neo4j.com/docs/http-api/current/actions/begin-a-transaction/) をそのまま返します。
+
+#### `results`
+
+#### `db`
+
+#### `user`
+
+#### `password`
 
 ## Variables
 
-### *db*
+### `*db*`
 
-### *user*
+### `*user*`
 
-### *password*
+### `*password*`
 
-### *scheme*
+### `*scheme*`
 
-### *host*
+### `*host*`
 
-### *port*
+### `*port*`
 
 ## Installation

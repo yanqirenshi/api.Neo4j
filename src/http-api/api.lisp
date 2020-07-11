@@ -47,10 +47,13 @@
   (let ((results (request :post (http-api-tx-path db commit)
                           :content (statements2content statements)
                           :user user :password password)))
-    (unless nature
-      (setf (getf results :|results|)
-            (adjust-results (getf results :|results|)
-                            :adjuster adjuster)))
+    (if nature
+        (when adjuster
+          (setf (getf results :|results|)
+                (mapcar adjuster results)))
+        (setf (getf results :|results|)
+              (adjust-results (getf results :|results|)
+                              :adjuster adjuster)))
     results))
 
 
