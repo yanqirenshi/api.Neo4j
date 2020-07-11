@@ -10,9 +10,13 @@
 ### HTTP API
 
 ```
-(api :http
-     :statements '(("CREATE (n $props) RETURN n" . (:|props| (:|name| "My Node" )))
-                   ("CREATE (n $props) RETURN n" . (:|props| (:|name| "Another Node")))))
+(http :statements
+      '(("MATCH (from:GENIUS)-[edge:HAVE_TO]->(to:FORCE) WHERE ID(parent) = 1 RETURN from, edge, to" . nil)))
+```
+
+```
+(http :statements '(("CREATE (n $props) RETURN n" . (:|props| (:|name| "My Node" )))
+                    ("CREATE (n $props) RETURN n" . (:|props| (:|name| "Another Node")))))
 ```
 
 ### REST API

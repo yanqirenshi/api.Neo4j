@@ -8,14 +8,19 @@
     (setf *environment* (http-api))))
 
 
-(defun http (&key (db *db*) (user *user*) (password *password*)
-             commit-uri
-             commit
-             statements)
+(defun http (&key
+               (db *db*) (user *user*) (password *password*)
+               commit-uri
+               commit
+               statements
+               adjuster
+               nature)
   (ensure-environment)
   (http-api :statements statements
             :commit-uri commit-uri
             :commit commit
             :db db
             :user user
-            :password password))
+            :password password
+            :nature nature
+            :adjuster adjuster))
