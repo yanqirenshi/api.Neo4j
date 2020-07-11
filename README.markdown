@@ -7,22 +7,38 @@
 
 ## Usage
 
-### HTTP API
-
 ```
-(http :statements
-      '(("MATCH (from:GENIUS)-[edge:HAVE_TO]->(to:FORCE) WHERE ID(parent) = 1 RETURN from, edge, to" . nil)))
-```
-
-```
-(http :statements '(("CREATE (n $props) RETURN n" . (:|props| (:|name| "My Node" )))
-                    ("CREATE (n $props) RETURN n" . (:|props| (:|name| "Another Node")))))
+(let ((stmt (concatenate 'string
+                         "MATCH (from:GENIUS)-[edge:HAVE_TO]->(to:FORCE) "
+                         "WHERE ID(from) = 1 "
+                         "RETURN from, edge, to")))
+  (neo4j:http :statements `((,stmt . nil))))
 ```
 
-### REST API
+```
+(let ((stmt "CREATE (n $props) RETURN n"))
+  (neo4j:http :statements `((,stmt . (:|props| (:|name| "My Node" )))
+                            (,stmt . (:|props| (:|name| "Another Node"))))))
+```
 
-```
-(api :rest)
-```
+## API
+
+### http
+
+**http** _&key_ **db** **user** **password** **commit-uri** **commit** **statements** **adjuster** **nature** _=>_ **result**
+
+## Variables
+
+### *db*
+
+### *user*
+
+### *password*
+
+### *scheme*
+
+### *host*
+
+### *port*
 
 ## Installation
