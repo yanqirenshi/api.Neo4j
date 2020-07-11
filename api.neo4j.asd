@@ -23,6 +23,10 @@ This file is a part of api.neo4j project.
                   :components
                   ((:file "result")
                    (:file "statement")
+                   (:module "adjuster"
+                    :components
+                            ((:file "adjust-results-default")
+                             (:file "adjust-results-nature")))
                    (:file "package")
                    (:file "api")))
                  (:file "package")

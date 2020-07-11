@@ -1,7 +1,9 @@
 (defpackage api.neo4j.http-api
   (:use #:cl
         #:api.neo4j.http-api.result
-        #:api.neo4j.http-api.statement)
+        #:api.neo4j.http-api.statement
+        #:api.neo4j.http-api.adjust-results-default
+        #:api.neo4j.http-api.adjust-results-nature)
   (:import-from :alexandria
                 #:when-let
                 #:make-keyword)
