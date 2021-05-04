@@ -3,6 +3,7 @@ import {
     Sections, Section, Contents,
 } from '../../components/Common.js';
 
+import Http from './operators/Http.js';
 import Wbs from './Wbs.js';
 
 const columns = [
@@ -34,11 +35,7 @@ const columns = [
 export default function Operators (props) {
     return (
         <Sections>
-          <Section title="Operators">
-            <Contents>
-              <p>オペレータの一覧。</p>
-            </Contents>
-          </Section>
+          <Http />
 
           <Section>
             <Contents>
