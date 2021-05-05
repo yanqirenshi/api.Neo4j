@@ -1,10 +1,5 @@
 # Api.Neo4j
 
-|          | url                                       | version |
-|----------|-------------------------------------------|---------|
-| rest-api | https://neo4j.com/docs/rest-docs/current/ | V3.5    |
-| http-api | https://neo4j.com/docs/http-api/current/  | V4      |
-
 ## Usage
 
 ```
@@ -20,6 +15,11 @@
   (neo4j:http :statements `((,stmt . (:|props| (:|name| "My Node" )))
                             (,stmt . (:|props| (:|name| "Another Node"))))))
 ```
+
+## Cypher
+
+- [The Neo4j Cypher Manual v4.2](https://neo4j.com/docs/cypher-manual/current/)
+- [lang.Cypher](https://github.com/yanqirenshi/lang.Cypher)
 
 ## API
 
