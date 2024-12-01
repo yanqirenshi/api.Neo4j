@@ -73,9 +73,16 @@ API から取得した値を変換するための関数を指定します。
 
 ### `*db*`
 
+初期インストールされているDB: neo4j
+
 ### `*user*`
 
+初期インストールされているDB: neo4j
+
 ### `*password*`
+
+初期パスワードって何なんだろう。
+[Set an initial password](https://neo4j.com/docs/operations-manual/current/configuration/set-initial-password/)
 
 ### `*scheme*`
 
