@@ -22,22 +22,6 @@
 - [lang.Cypher](https://github.com/yanqirenshi/lang.Cypher)
 
 
-### (1) ノードの作成
-
-```
-CREATE (u:User {name: 'Alice', age: 30})
-CREATE (p:Product {name: 'Laptop', price: 1200})
-```
-
-### (2) リレーションシップ(エッジ)の作り方
-
-```
-MATCH (a), (b)
-WHERE ID(a) = 1 AND ID(b) = 2
-CREATE (a)-[r:FRIEND]->(b)
-RETURN a, b, r
-```
-
 ## API
 
 ### http
@@ -106,5 +90,3 @@ API から取得した値を変換するための関数を指定します。
 ### `*host*`
 
 ### `*port*`
-
-## Installation

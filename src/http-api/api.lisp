@@ -32,9 +32,14 @@
 
 (defun http-api (&key
                    statements
+                   ;; commit
                    commit-uri
                    (commit t)
-                   db user password
+                   ;;
+                   db
+                   user
+                   password
+                   ;;
                    nature
                    adjuster)
   (cond (commit-uri

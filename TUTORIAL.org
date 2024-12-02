@@ -1,0 +1,41 @@
+* Contents of Index
+
+** (1) Install & Settings
+
+```
+(ql:quickload :api.neo4j)
+```
+
+*** ~/.sbclrc
+
+```
+(ql:quickload :api.neo4j)
+(setf neo4j:*db* "neo4j")
+(setf neo4j:*user* "neo4j")
+(setf neo4j:*password* "password")
+```
+
+** (2) 全件取得
+
+#+begin_src
+(let ((stmt (concatenate 'string "MATCH (n) RETURN n")))
+  (neo4j:http :statements `((,stmt . nil))))
+#+end_src
+
+
+** (3) ノードの作成
+
+#+begin_src
+CREATE (u:User {name: 'Alice', age: 30})
+CREATE (p:Product {name: 'Laptop', price: 1200})
+#+end_src
+
+
+** (4) リレーションシップ(エッジ)の作り方
+
+#+begin_src
+MATCH (a), (b)
+WHERE ID(a) = 1 AND ID(b) = 2
+CREATE (a)-[r:FRIEND]->(b)
+RETURN a, b, r
+#+end_src
