@@ -36,9 +36,6 @@
         :symbols (package-symbols package)))
 
 (defun symbol-metrix ()
-  (reduce #'(lambda (ht package)
-              (setf (gethash (package-name package) ht)
-                    (make-package-data package))
-              ht)
-          (list-all-packages)
-          :initial-value (make-hash-table :test 'equal)))
+  (mapcar #'(lambda (package)
+              (make-package-data package))
+          (list-all-packages)))

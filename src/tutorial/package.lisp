@@ -14,13 +14,25 @@
 ;;;                 - export t  - type
 ;;;
 
-(defun save-package (data) data)
+(defun create-package (package)
+  (let ((stmt (concatenate 'string
+                           (format nil "CREATE (n:PACKAGE {name: '~a'}) RETURN n"
+                                   (package-name package)))))
+    (format t "~a~%" stmt)
+    (neo4j:http :statements `((,stmt . nil))
+                :commit t)))
 
-(defun get-package (data) data)
+(defun get-package (package)
+  (let ((stmt (concatenate 'string
+                           (format nil "MATCH (n:PACKAGE {name: '~a'}) RETURN n"
+                                   (package-name package)))))
+    (format t "~a~%" stmt)
+    (let ((response (neo4j:http :statements `((,stmt . nil)))))
+      (first (getf response :|results|)))))
 
-(defun ensure-package (data) data)
-
-
+(defun ensure-package (package)
+  (or (get-package package)
+      (create-package package)))
 
 (defun save-package-symbol (data) data)
 

@@ -43,6 +43,9 @@
   (when-let ((result (car results)))
     (let ((rows (getf result :|data|))
           (columns (getf result :|columns|)))
-      (cons (adjust-rows columns rows :adjuster adjuster)
+      (cons (adjust-rows columns
+                         rows
+                         :adjuster
+                         adjuster)
             (adjust-results-default (cdr results)
                                     :adjuster adjuster)))))
