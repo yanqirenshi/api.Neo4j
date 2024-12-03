@@ -5,15 +5,18 @@
                 #:http))
 (in-package :api.neo4j.tutorial)
 
-;;;
-;;; neo4j operators
-;;;
-;;; |---1---|-------2-----------------|---------3----------|
-;;;
-;;; (Package)------:HAVE------>(Symbol)------:INPORT------>(Package)
-;;;                 - export t  - type
-;;;
+;;;;;
+;;;;; neo4j operators
+;;;;;
+;;;;; |---1---|-------2-----------------|---------3----------|
+;;;;;
+;;;;; (Package)------:HAVE------>(Symbol)------:INPORT------>(Package)
+;;;;;                 - export t  - type
+;;;;;
 
+;;;;;
+;;;;; Package
+;;;;;
 (defun create-package (package)
   (let ((stmt (concatenate 'string
                            (format nil "CREATE (n:PACKAGE {name: '~a'}) RETURN n"
@@ -34,16 +37,26 @@
   (or (get-package package)
       (create-package package)))
 
-(defun save-package-symbol (data) data)
+
+;;;;;
+;;;;; Package symbol
+;;;;;
+(defun create-package-symbol (data) data)
 
 (defun get-package-symbol (data) data)
 
-(defun ensure-package-symbol (data) data)
+(defun ensure-package-symbol (data)
+  (or (get-package-symbol data)
+      (create-package-symbol data)))
 
 
-
-(defun save-import (data) data)
+;;;;;
+;;;;; Package import
+;;;;;
+(defun create-import (data) data)
 
 (defun get-import (data) data)
 
-(defun ensure-import (data) data)
+(defun ensure-import (data)
+  (or (get-import data)
+      (create-import data)))
