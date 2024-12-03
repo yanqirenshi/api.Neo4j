@@ -22,7 +22,6 @@
   (neo4j:http :statements `((,stmt . nil))))
 #+end_src
 
-
 ** (3) ノードの作成
 
 #+begin_src
@@ -30,6 +29,14 @@ CREATE (u:User {name: 'Alice', age: 30})
 CREATE (p:Product {name: 'Laptop', price: 1200})
 #+end_src
 
+
+#+begin_src
+(let ((stmt (concatenate 'string "CREATE (u:User {name: 'satoshi', age: 48})")))
+  (neo4j:http :statements `((,stmt . nil))
+              :commit t))
+#+end_src
+
+CREATE (u:User {name: 'Bob', age: 25})-[:BOUGHT {date: '2024-12-01'}]->(p:Product {name: 'Tablet', price: 600})
 
 ** (4) リレーションシップ(エッジ)の作り方
 
@@ -39,3 +46,122 @@ WHERE ID(a) = 1 AND ID(b) = 2
 CREATE (a)-[r:FRIEND]->(b)
 RETURN a, b, r
 #+end_src
+
+** (a) Common Lisp のシンボルを登録する。
+
+#+begin_src
+;;;;;
+;;;;; intestinal environment
+;;;;;
+;;;;; 腸内環境
+;;;;;
+
+(in-package :cl)
+
+(ql:quickload :alexandria)
+
+;;;
+;;; symbols
+;;;
+(defun external-symbolp (symbol external-symbols)
+  (when external-symbols
+    (if (eq symbol (car external-symbols))
+        t
+        (external-symbolp symbol (cdr external-symbols)))))
+
+(defun package-symbols (package)
+  (let ((out nil)
+        (external-symbols (package-external-symbols package)))
+    (do-symbols (symbol package out)
+      (push
+       (if (eq package (symbol-package symbol))
+           (list :package package
+                 :symbol symbol
+                 :export (external-symbolp symbol external-symbols))
+           (list :package (symbol-package symbol)
+                 :symbol symbol
+                 :inport t))
+       out))))
+
+;;;
+;;; package
+;;;
+(defun make-package-data (package)
+  (list :package package
+        :symbols (package-symbols package)))
+
+(defun symbol-metrix ()
+  (reduce #'(lambda (ht package)
+              (setf (gethash (package-name package) ht)
+                    (make-package-data package))
+              ht)
+          (list-all-packages)
+          :initial-value (make-hash-table :test 'equal)))
+
+;;;;;
+;;;;; [package] --:have_export--> [symbol] --:intern--> [package]
+;;;;;           --:have---------> [symbol]
+;;;;;
+#+end_src
+
+1. すべてのパッケージを取得する
+2. パッケージのシンボルを取得する
+3. export, inport されているシンボルを取得する
+
+*** (1) データ型全般
+
+| symbol       | description                                        |
+|--------------+----------------------------------------------------|
+| typep        | 任意の型に対する汎用的なチェック                   |
+|--------------+----------------------------------------------------|
+| arrayp       | 配列かどうかを判定                                 |
+| numberp      | 数値かどうかを判定                                 |
+| integerp     | 整数かどうかを判定                                 |
+| rationalp    | 有理数かどうかを判定                               |
+| floatp       | 浮動小数点数かどうかを判定                         |
+| complexp     | 複素数かどうかを判定                               |
+| stringp      | 文字列かどうかを判定                               |
+| characterp   | 文字かどうかを判定                                 |
+| atom         | アトム（リストではないオブジェクト）かどうかを判定 |
+| listp        | リストかどうかを判定                               |
+| null         | NILかどうかを判定                                  |
+| consp        | CONSセルかどうかを判定                             |
+| hash-table-p | ハッシュテーブルかどうかを判定                     |
+| pathnamep    | パス名かどうかを判定                               |
+| streamp      | ストリームかどうかを判定                           |
+| bit-vector-p | ビットベクトルかどうかを判定                       |
+|--------------+----------------------------------------------------|
+| functionp    | オブジェクトが関数かどうかを判定                   |
+| symbolp      | シンボルかどうかを判定                             |
+| keywordp     | キーワードシンボルかどうかを判定                   |
+| packagep     | パッケージかどうかを判定                           |
+|--------------+----------------------------------------------------|
+| readtablep   | リードテーブルかどうかを判定                       |
+
+*** (2) 条件付きタイプチェック
+
+| symbol | description                      |
+|--------+----------------------------------|
+| zerop  | オブジェクトがゼロかどうかを判定 |
+| plusp  | 正の数かどうかを判定             |
+| minusp | 負の数かどうかを判定             |
+| evenp  | 偶数かどうかを判定               |
+| oddp   | 奇数かどうかを判定               |
+
+*** (3) クラスとオブジェクト関連
+
+| symbol             | description                                            |
+|--------------------+--------------------------------------------------------|
+| class-of           | オブジェクトのクラスを取得（型情報を取得するのに有用） |
+| standard-object-p  | 標準オブジェクトかどうかを判定                         |
+| structure-object-p | 構造体オブジェクトかどうかを判定                       |
+
+*** (4) 型に基づく述語の作成
+
+| symbol   | description                                 |
+|----------+---------------------------------------------|
+| subtypep | 2つの型がサブタイプ関係にあるかどうかを判定 |
+
+*** (4) ユーザー定義型と組み合わせ
+
+deftype と typep を組み合わせてカスタム型チェックを作成
