@@ -32,7 +32,9 @@ This file is a part of api.neo4j project.
                  (:file "package")
                  (:file "variables")
                  (:file "api")
-                 (:file "user"))))
+                 (:file "user")
+                 (:module "tutorial"
+                  :components ((:file "package"))))))
   :description ""
   :long-description
   #.(read-file-string

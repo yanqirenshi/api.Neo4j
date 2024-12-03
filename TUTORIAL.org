@@ -49,60 +49,7 @@ RETURN a, b, r
 
 ** (a) Common Lisp のシンボルを登録する。
 
-#+begin_src
-;;;;;
-;;;;; intestinal environment
-;;;;;
-;;;;; 腸内環境
-;;;;;
-
-(in-package :cl)
-
-(ql:quickload :alexandria)
-
-;;;
-;;; symbols
-;;;
-(defun external-symbolp (symbol external-symbols)
-  (when external-symbols
-    (if (eq symbol (car external-symbols))
-        t
-        (external-symbolp symbol (cdr external-symbols)))))
-
-(defun package-symbols (package)
-  (let ((out nil)
-        (external-symbols (package-external-symbols package)))
-    (do-symbols (symbol package out)
-      (push
-       (if (eq package (symbol-package symbol))
-           (list :package package
-                 :symbol symbol
-                 :export (external-symbolp symbol external-symbols))
-           (list :package (symbol-package symbol)
-                 :symbol symbol
-                 :inport t))
-       out))))
-
-;;;
-;;; package
-;;;
-(defun make-package-data (package)
-  (list :package package
-        :symbols (package-symbols package)))
-
-(defun symbol-metrix ()
-  (reduce #'(lambda (ht package)
-              (setf (gethash (package-name package) ht)
-                    (make-package-data package))
-              ht)
-          (list-all-packages)
-          :initial-value (make-hash-table :test 'equal)))
-
-;;;;;
-;;;;; [package] --:have_export--> [symbol] --:intern--> [package]
-;;;;;           --:have---------> [symbol]
-;;;;;
-#+end_src
+Package: API.NEO4J.TUTORIAL
 
 1. すべてのパッケージを取得する
 2. パッケージのシンボルを取得する
