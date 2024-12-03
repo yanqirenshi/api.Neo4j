@@ -6,49 +6,32 @@
 (in-package :api.neo4j.tutorial)
 
 ;;;
-;;; symbols
+;;; neo4j operators
 ;;;
-(defun package-external-symbols (package)
-  (let ((out nil))
-    (do-external-symbols (s package out)
-      (push s out))))
-
-(defun external-symbolp (symbol external-symbols)
-  (when external-symbols
-    (if (eq symbol (car external-symbols))
-        t
-        (external-symbolp symbol (cdr external-symbols)))))
-
-(defun package-symbols (package)
-  (let ((out nil)
-        (external-symbols (package-external-symbols package)))
-    (do-symbols (symbol package out)
-      (push
-       (if (eq package (symbol-package symbol))
-           (list :package package
-                 :symbol symbol
-                 :export (external-symbolp symbol external-symbols))
-           (list :package (symbol-package symbol)
-                 :symbol symbol
-                 :import t))
-       out))))
-
+;;; |---1---|-------2-----------------|---------3----------|
 ;;;
-;;; package
+;;; (Package)------:HAVE------>(Symbol)------:INPORT------>(Package)
+;;;                 - export t  - type
 ;;;
-(defun make-package-data (package)
-  (list :package package
-        :symbols (package-symbols package)))
 
-(defun symbol-metrix ()
-  (reduce #'(lambda (ht package)
-              (setf (gethash (package-name package) ht)
-                    (make-package-data package))
-              ht)
-          (list-all-packages)
-          :initial-value (make-hash-table :test 'equal)))
+(defun save-package (data) data)
 
-;;;;;
-;;;;; [package] --:have_export--> [symbol] --:intern--> [package]
-;;;;;           --:have---------> [symbol]
-;;;;;
+(defun get-package (data) data)
+
+(defun ensure-package (data) data)
+
+
+
+(defun save-package-symbol (data) data)
+
+(defun get-package-symbol (data) data)
+
+(defun ensure-package-symbol (data) data)
+
+
+
+(defun save-import (data) data)
+
+(defun get-import (data) data)
+
+(defun ensure-import (data) data)

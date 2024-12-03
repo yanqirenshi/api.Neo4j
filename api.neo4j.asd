@@ -34,7 +34,9 @@ This file is a part of api.neo4j project.
                  (:file "api")
                  (:file "user")
                  (:module "tutorial"
-                  :components ((:file "package"))))))
+                  :components ((:file "package")
+                               (:file "cl2data")
+                               (:file "data2neo4j"))))))
   :description ""
   :long-description
   #.(read-file-string
