@@ -22,10 +22,11 @@
        (if (eq package (symbol-package symbol))
            (list :package package
                  :symbol symbol
+                 :type   :have
                  :export (external-symbolp symbol external-symbols))
            (list :package (symbol-package symbol)
                  :symbol symbol
-                 :import t))
+                 :type   :import))
        out))))
 
 ;;;

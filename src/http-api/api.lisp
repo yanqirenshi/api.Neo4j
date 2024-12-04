@@ -13,6 +13,7 @@
 
 (defun http-api-tx (statements commit db user password &key adjuster nature)
   (assert db)
+  (format t "commit: ~a~%" commit)
   (let ((api-results (request :post (http-api-tx-path db commit)
                               :content (statements2content statements)
                               :user user :password password)))

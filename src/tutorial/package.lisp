@@ -41,9 +41,22 @@
 ;;;;;
 ;;;;; Package symbol
 ;;;;;
-(defun create-package-symbol (data) data)
+(defun create-package-symbol (data)
+  (let ((stmt (concatenate 'string
+                           (format nil "CREATE (n:SYMBOL {name: '~a'}) RETURN n"
+                                   (symbol-name data)))))
+    (format t "~a~%" stmt)
+    (neo4j:http :statements `((,stmt . nil))
+                :commit t)))
 
-(defun get-package-symbol (data) data)
+(defun get-package-symbol (data)
+  (let ((stmt (concatenate 'string
+                           (format nil "MATCH (n:SYMBOL {name: '~a'}) RETURN n"
+                                   (symbol-name data)))))
+    (format t "~a~%" stmt)
+    (let ((response (neo4j:http :statements `((,stmt . nil)))))
+      (first (getf response :|results|)))))
+
 
 (defun ensure-package-symbol (data)
   (or (get-package-symbol data)
@@ -60,3 +73,6 @@
 (defun ensure-import (data)
   (or (get-import data)
       (create-import data)))
+
+
+;; CREATE (p:PACKAGE {name: '~a'})-[r:HAVE {export: 'T'}]->(s:SYMBOL {name: '~a'})
