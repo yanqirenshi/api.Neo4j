@@ -37,21 +37,6 @@
 ;;;;; (Package)------:HAVE------>(Symbol)------:INPORT------>(Package)
 ;;;;;                 - export t  - type
 ;;;;;
-(defun create-package-and-symbol-stmt (plist)
-  (let* ((package (getf plist :package))
-         (symbol  (getf plist :symbol)))
-    (concatenate 'string
-                 (format nil " MERGE (p:PACKAGE {name: '~a'})"         (package-name package))
-                 (format nil " MERGE (s:SYMBOL  {name: '~a'})"         (symbol-name symbol))
-                 (format nil " MERGE (p)-[r:HAVE {export: '~a'}]->(s)" (getf plist :export)))))
-
-(defun create-package-and-symbol (data)
-  (dolist (symbol-data (getf data :symbols))
-    (let ((stmt (create-package-and-symbol-stmt symbol-data)))
-      ;; (format t "~a~%" stmt)
-      (neo4j:http :statements `((,stmt . nil)) :commit t))))
-
-;; (bt:make-thread #'(lambda () (neo4j.tutorial::save (neo4j.tutorial::symbol-metrix))))
 
 
 ;;;;;
@@ -71,33 +56,20 @@
 ;;;;; Package symbol
 ;;;;;
 
-;; MATCH (p:PACKAGE {name: "ASDF/OUTPUT-TRANSLATIONS"})
-;; MATCH (s:PACKAGE {name: "ASDF/OUTPUT-TRANSLATIONS"})
-;; RETURN p,s
-;; MATCH (PACKAGE {name: $name})-[HAVE]->(s:PACKAGE) RETURN s
+(defun create-package-symbol-stmt (plist)
+  (let ((package (getf plist :package))
+        (symbol  (getf plist :symbol))
+        (export  (getf plist :export)))
+    (cons (concatenate 'string
+                       " MATCH (p:PACKAGE {name: $PACKAGE_NAME}) "
+                       " MERGE (p)-[r:HAVE {export: $EXPORT}]->(s:SYMBOL {name: $SYMBOL_NAME}) "
+                       " RETURN p, r, s ")
+          (list :package_name (package-name package)
+                :export export
+                :symbol_name (symbol-name symbol)))))
 
-
-(defun create-package-symbol (data)
-  (let ((stmt (concatenate 'string
-                           (format nil "CREATE (n:SYMBOL {name: '~a'}) RETURN n"
-                                   (symbol-name data)))))
-    (format t "~a~%" stmt)
-    (neo4j:http :statements `((,stmt . nil))
-                :commit t)))
-
-(defun get-package-symbol (data)
-  (let ((stmt (concatenate 'string
-                           (format nil "MATCH (n:SYMBOL {name: '~a'}) RETURN n"
-                                   (symbol-name data)))))
-    (format t "~a~%" stmt)
-    (let ((response (neo4j:http :statements `((,stmt . nil)))))
-      (first (getf response :|results|)))))
-
-
-(defun ensure-package-symbol (data)
-  (or (get-package-symbol data)
-      (create-package-symbol data)))
-
+(defun create-stmts-package-symbol (chank)
+  (mapcar #'create-package-symbol-stmt chank))
 
 ;;;;;
 ;;;;; Package import
