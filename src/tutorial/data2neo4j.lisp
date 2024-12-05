@@ -17,9 +17,11 @@
     (funcall fn plist)))
 
 (defun save (lists)
+  (%save #'create-package-and-symbol lists)
   ;; 1. package を作成する。
   ;; (ensure-package (getf plist :package))
   ;; 2. package の symbol を登録する。
-  (%save #'save-pacakge-symbols lists)
+  ;; (%save #'save-pacakge-symbols lists)
   ;; 3. package の import を登録する。
-  (%save #'save-import-symbols lists))
+  ;; (%save #'save-import-symbols lists)
+  )

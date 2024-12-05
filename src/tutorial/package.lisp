@@ -5,6 +5,30 @@
                 #:http))
 (in-package :api.neo4j.tutorial)
 
+
+;;;;;
+;;;;; Utils
+;;;;;
+(defun dolist-times (chunk-size lst)
+  (when lst
+    (let ((chunk (subseq lst 0 (min chunk-size (length lst)))))
+      ;; 各チャンクの処理
+      (format t "Processing chunk: ~a~%" chunk)
+      ;; 残りのリストを再帰的に処理
+      (dolist-times chunk-size (nthcdr chunk-size lst)))))
+
+(defun make-stmts (list) list)
+
+;;;;;
+;;;;; DELETE
+;;;;;
+(defun delete-all-elements ()
+  (let ((stmt "MATCH (n) DETACH DELETE n"))
+    (format t "~a~%" stmt)
+    (neo4j:http :statements `((,stmt . nil))
+                :commit t)))
+
+
 ;;;;;
 ;;;;; neo4j operators
 ;;;;;
@@ -13,6 +37,22 @@
 ;;;;; (Package)------:HAVE------>(Symbol)------:INPORT------>(Package)
 ;;;;;                 - export t  - type
 ;;;;;
+(defun create-package-and-symbol-stmt (plist)
+  (let* ((package (getf plist :package))
+         (symbol  (getf plist :symbol)))
+    (concatenate 'string
+                 (format nil " MERGE (p:PACKAGE {name: '~a'})"         (package-name package))
+                 (format nil " MERGE (s:SYMBOL  {name: '~a'})"         (symbol-name symbol))
+                 (format nil " MERGE (p)-[r:HAVE {export: '~a'}]->(s)" (getf plist :export)))))
+
+(defun create-package-and-symbol (data)
+  (dolist (symbol-data (getf data :symbols))
+    (let ((stmt (create-package-and-symbol-stmt symbol-data)))
+      ;; (format t "~a~%" stmt)
+      (neo4j:http :statements `((,stmt . nil)) :commit t))))
+
+;; (bt:make-thread #'(lambda () (neo4j.tutorial::save (neo4j.tutorial::symbol-metrix))))
+
 
 ;;;;;
 ;;;;; Package
@@ -73,6 +113,3 @@
 (defun ensure-import (data)
   (or (get-import data)
       (create-import data)))
-
-
-;; CREATE (p:PACKAGE {name: '~a'})-[r:HAVE {export: 'T'}]->(s:SYMBOL {name: '~a'})
