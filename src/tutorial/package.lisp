@@ -5,17 +5,17 @@
                 #:http))
 (in-package :api.neo4j.tutorial)
 
-
 ;;;;;
 ;;;;; Utils
 ;;;;;
-(defun dolist-times (chunk-size lst)
+(defun dolist-times (fn chunk-size lst)
   (when lst
     (let ((chunk (subseq lst 0 (min chunk-size (length lst)))))
       ;; 各チャンクの処理
-      (format t "Processing chunk: ~a~%" chunk)
+      (funcall fn chunk)
+      ;; (format t "Processing chunk: ~a~%" chunk)
       ;; 残りのリストを再帰的に処理
-      (dolist-times chunk-size (nthcdr chunk-size lst)))))
+      (dolist-times fn chunk-size (nthcdr chunk-size lst)))))
 
 (defun make-stmts (list) list)
 
@@ -57,30 +57,26 @@
 ;;;;;
 ;;;;; Package
 ;;;;;
-(defun create-package (package)
-  (let ((stmt (concatenate 'string
-                           (format nil "CREATE (n:PACKAGE {name: '~a'}) RETURN n"
-                                   (package-name package)))))
-    (format t "~a~%" stmt)
-    (neo4j:http :statements `((,stmt . nil))
-                :commit t)))
+(defun merge-stmt-package (package)
+  (cons "MERGE (n:PACKAGE {name: $NAME}) RETURN n"
+        (list :name (package-name package))))
 
-(defun get-package (package)
-  (let ((stmt (concatenate 'string
-                           (format nil "MATCH (n:PACKAGE {name: '~a'}) RETURN n"
-                                   (package-name package)))))
-    (format t "~a~%" stmt)
-    (let ((response (neo4j:http :statements `((,stmt . nil)))))
-      (first (getf response :|results|)))))
-
-(defun ensure-package (package)
-  (or (get-package package)
-      (create-package package)))
+(defun merge-stmt-packages (chank)
+  (mapcar #'(lambda (plist)
+              (merge-stmt-package (getf plist :package)))
+          chank))
 
 
 ;;;;;
 ;;;;; Package symbol
 ;;;;;
+
+;; MATCH (p:PACKAGE {name: "ASDF/OUTPUT-TRANSLATIONS"})
+;; MATCH (s:PACKAGE {name: "ASDF/OUTPUT-TRANSLATIONS"})
+;; RETURN p,s
+;; MATCH (PACKAGE {name: $name})-[HAVE]->(s:PACKAGE) RETURN s
+
+
 (defun create-package-symbol (data)
   (let ((stmt (concatenate 'string
                            (format nil "CREATE (n:SYMBOL {name: '~a'}) RETURN n"

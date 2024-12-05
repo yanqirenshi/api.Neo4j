@@ -12,6 +12,10 @@
 
 
 (defun mkstmts-core (data)
+  "data: cons cell of (statement . parameters)
+statement: string
+parameters: plist
+"
   (alexandria:when-let ((s (car data)))
     (cons (mkstmt (car s)
                   (cdr s))
