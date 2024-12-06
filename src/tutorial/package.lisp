@@ -74,10 +74,19 @@
 ;;;;;
 ;;;;; Package import
 ;;;;;
-(defun create-import (data) data)
 
-(defun get-import (data) data)
+(defun create-import-stmt (plist)
+  (let* ((package-import-to (getf plist :package))
+         (symbol  (getf plist :symbol))
+         (package-import-from (symbol-package symbol)))
+    (cons (concatenate 'string
+                       " MATCH (pf:PACKAGE {name: $PACKAGE_NAME_IMPORT_FROM}) "
+                       " MATCH (pf)-[HAVE]->(s:SYMBOL {name: $SYMBOL_NAME}) "
+                       " MERGE (pf)-[r:IMPORT]->(pt:PACKAGE {name: $PACKAGE_NAME_IMPORT_TO}) "
+                       "RETURN pt, r, s ")
+          (list :package_name_import_from (package-name package-import-from)
+                :symbol_name (symbol-name symbol)
+                :package_name_import_to (package-name package-import-to)))))
 
-(defun ensure-import (data)
-  (or (get-import data)
-      (create-import data)))
+(defun create-stmts-import (chank)
+  (mapcar #'create-import-stmt chank))
